@@ -1,0 +1,6 @@
+*.substvars
+*debhelper*
+.debhelper
+atlassian-fisheye
+files
+tmp
