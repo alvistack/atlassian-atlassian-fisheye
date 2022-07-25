@@ -1,0 +1,36 @@
+#!/usr/bin/make -f
+
+SHELL := /bin/bash
+
+override_dh_auto_build:
+
+override_dh_auto_install:
+	install -Dpm755 -d debian/tmp/lib/systemd/system
+	install -Dpm755 -d debian/tmp/opt/atlassian/fisheye
+	cp -rfT fisheye debian/tmp/opt/atlassian/fisheye
+	install -Dpm644 -t debian/tmp/lib/systemd/system fisheye.service
+	chmod a+x debian/tmp/opt/atlassian/fisheye/bin/start.sh
+	chmod a+x debian/tmp/opt/atlassian/fisheye/bin/stop.sh
+	fdupes -qnrps debian/tmp/opt/atlassian/fisheye
+
+override_dh_fixperms:
+	dh_fixperms
+	chmod a+x debian/atlassian-fisheye/opt/atlassian/fisheye/bin/start.sh
+	chmod a+x debian/atlassian-fisheye/opt/atlassian/fisheye/bin/stop.sh
+
+override_dh_strip:
+
+override_dh_strip_nondeterminism:
+
+override_dh_shlibdeps:
+
+override_dh_makeshlibs:
+
+override_dh_dwz:
+
+override_dh_auto_test:
+
+override_dh_auto_clean:
+
+%:
+	dh $@

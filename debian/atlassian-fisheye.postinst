@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+FISHEYE_CATALINA=/opt/atlassian/fisheye
+
+chown -Rf fisheye:fisheye $FISHEYE_CATALINA
+chmod 0700 $FISHEYE_CATALINA
+
+#DEBHELPER#
+
+exit 0
