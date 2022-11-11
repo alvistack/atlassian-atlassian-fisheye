@@ -1,0 +1,5 @@
+atlassian-fisheye source: file-without-copyright-information
+atlassian-fisheye source: license-problem-json-evil
+atlassian-fisheye source: no-debian-changes
+atlassian-fisheye source: source-contains-prebuilt-windows-binary
+atlassian-fisheye source: source-is-missing
