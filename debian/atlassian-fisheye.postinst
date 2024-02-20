@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+FISHEYE_DOWNLOAD_URL=http://product-downloads.atlassian.com/software/fisheye/downloads/fisheye-4.8.14.zip
+FISHEYE_DOWNLOAD_DEST=/tmp/atlassian-fisheye-4.8.14.tar.gz
+FISHEYE_DOWNLOAD_CHECKSUM=576d90a42c11d2006ef638dcdb3312eb091c1e9dc0795767312ebe53ff0520b8
+
+FISHEYE_CATALINA=/opt/atlassian/fisheye
+FISHEYE_PATCH=/opt/atlassian/atlassian-fisheye.patch
+
+wget -c $FISHEYE_DOWNLOAD_URL -O $FISHEYE_DOWNLOAD_DEST
+echo -n "$FISHEYE_DOWNLOAD_CHECKSUM $FISHEYE_DOWNLOAD_DEST" | sha256sum -c -
+
+rm -rf $FISHEYE_CATALINA
+mkdir -p $FISHEYE_CATALINA
+TMP_DIR="$(mktemp -d)" && \
+    unzip -d $TMP_DIR $FISHEYE_DOWNLOAD_DEST && \
+    cp -rfT $TMP_DIR/* $FISHEYE_CATALINA && \
+    rm -rf $TMP_DIR
+
+cat $FISHEYE_PATCH | patch -p1 -d /
+chmod a+x $FISHEYE_CATALINA/bin/start.sh
+chmod a+x $FISHEYE_CATALINA/bin/stop.sh
+find $FISHEYE_CATALINA -type f -name '*.so' -exec chrpath -d {} \;
+find $FISHEYE_CATALINA -type f -name '*.bak' -delete
+find $FISHEYE_CATALINA -type f -name '*.orig' -delete
+find $FISHEYE_CATALINA -type f -name '*.rej' -delete
+fdupes -qnrps $FISHEYE_CATALINA
+
+chown -Rf fisheye:fisheye $FISHEYE_CATALINA
+chmod 0700 $FISHEYE_CATALINA
+
+#DEBHELPER#
+
+exit 0
