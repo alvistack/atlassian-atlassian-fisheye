@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+FISHEYE_HOME=/var/atlassian/application-data/fisheye
+
+if [ ! -d $FISHEYE_HOME -a ! -L $FISHEYE_HOME ]; then
+    mkdir -p $FISHEYE_HOME
+fi
+
+if ! getent group fisheye >/dev/null; then
+    groupadd \
+        --system \
+        fisheye
+fi
+
+if ! getent passwd fisheye >/dev/null; then
+    useradd \
+        --system \
+        --gid fisheye \
+        --home-dir $FISHEYE_HOME \
+        --no-create-home \
+        --shell /usr/sbin/nologin \
+        fisheye
+fi
+
+chown -Rf fisheye:fisheye $FISHEYE_HOME
+chmod 0750 $FISHEYE_HOME
+
+#DEBHELPER#
+
+exit 0
